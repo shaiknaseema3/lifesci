@@ -1,0 +1,212 @@
+You are an expert Senior Frontend Developer. I have provided you with my complete Spring Boot backend workspace for the "LifeSci360" Clinical Research Platform, along with the current React + Vite `frontend` folder we have been working on.
+ 
+We are now moving to Phase 3 of frontend development. Your task is to implement the **Patient Module** and **Investigator Module** by directly analyzing the backend code.
+ 
+**Important Context:** You must continue working inside the existing `frontend` folder. This is a continuation of the Landing Page, Auth, Users, Protocols, and Sites modules we already created. Do not overwrite or remove existing functionality; append and integrate your new code seamlessly into the existing routing, sidebars, and layouts.
+ 
+### 1. Backend Code Analysis & Integration
+
+Do not rely on me to list the APIs manually. Instead, read `PatientController.java`, `InvestigatorController.java`, and their associated DTOs, Enums (like `EnrollmentStatus`), and security configuration in the backend folder. 
+
+For every endpoint in these controllers, you must:
+
+1. Identify the exact route, HTTP method, required query parameters, and request/response DTO structures.
+
+2. Identify the `@PreAuthorize` role restrictions (e.g., Investigators can only see their own patients, Admins can see all, etc.).
+
+3. Implement the corresponding API calls in `/src/services/patientService.js` and `/src/services/investigatorService.js` using our existing Axios instance.
+ 
+**Special API Handling Required:**
+
+* **Patient Status Transitions:** Pay close attention to how patient status updates are handled (e.g., `PATCH /api/patients/{id}/status`). Ensure the UI handles these state machine transitions accurately based on backend validation.
+
+* **Filtered Fetching:** Note endpoints like fetching patients by investigator (`/api/patients/investigator/{id}`) or by protocol (`/api/patients/protocol/{id}`). 
+
+* **Investigator Overview:** Read the `InvestigatorOverviewDto` returned by the Investigator endpoint to understand what metrics/data need to be visualized.
+ 
+### 2. UI & RBAC Requirements
+
+Build the UI components mapping to these features. 
+
+* Strictly enforce Role-Based Access Control in the UI using our existing `<HasRole roles={[...]}>` wrapper or `<ProtectedRoute>`. 
+
+* **Investigator Dashboard (`/investigator/overview`):** A customized view for Investigators showing their performance metrics, assigned protocols, and a quick list of their active patients (based on `InvestigatorOverviewDto`).
+
+* **Patients Directory (`/patients`):** Searchable/filterable table view of patients (Search by name, filter by Enrollment Status, Protocol, or Site). 
+
+* **Patient Details View:** A clean profile view showing:
+
+  - Demographics & Contact Info.
+
+  - Current Enrollment Status with a "Change Status" dropdown/modal (restricted by role).
+
+  - Assigned Protocol & Investigator.
+
+* **Register Patient Modal:** Form for `POST /api/patients` (Ensure dropdowns for selecting Protocol and Investigator are populated correctly based on backend rules).
+ 
+### 3. Design System Continuity (Army - Dark Glassmorphism)
+
+Maintain the exact design language established in previous phases:
+
+- **Background:** `#0b1326` (Midnight).
+
+- **Glass Surfaces:** `#131b2e` or `#171f33` (70-80% opacity), `backdrop-filter: blur(20px)`, and subtle 1px white borders (`rgba(255,255,255,0.05)`).
+
+- **Accents:** Cyan (`#4cd7f6`) for primary actions.
+
+- **Tables:** Horizontal dividers only.
+
+- **Status Badges:** Use vibrant, glowing pill badges for patient statuses (e.g., SCREENING = Amber, ENROLLED = Cyan, COMPLETED = Emerald, WITHDRAWN = Rose).
+ 
+### 4. Deliverables & Execution
+
+1. Analyze the backend controllers (`PatientController.java`, `InvestigatorController.java`) first to understand the exact payload requirements and role restrictions.
+
+2. Generate/Update the API service files (`patientService.js`, `investigatorService.js`).
+
+3. Generate the React pages, profile views, and modals for Patients and Investigators.
+
+4. Integrate them into the main routing (`App.jsx` or your router file) and navigation sidebars dynamically based on the user's role.
+ 
+**CRITICAL RULE:** Ensure that by the end of your modifications, EVERY API endpoint for ALL modules built so far (Auth, Users, Protocols, Sites, Patients, Investigators) works perfectly from the UI without a single issue or regression. Verify your frontend payloads exactly match the backend DTOs.
+ 
+Let's begin. Provide the code step-by-step.
+ 
+You are an expert Senior Frontend Developer. I have provided you with my complete Spring Boot backend workspace for the "LifeSci360" Clinical Research Platform, along with the current React + Vite `frontend` folder we have been working on.
+ 
+We are now moving to Phase 4 of frontend development. Your task is to implement the **Visits Module** and **Samples Module** by directly analyzing the backend code.
+ 
+**Important Context:** You must continue working inside the existing `frontend` folder. This is a continuation of the Landing Page, Auth, Users, Protocols, Sites, Patients, and Investigator modules we already created. Do not overwrite or remove existing functionality; append and integrate your new code seamlessly into the existing routing, sidebars, and layouts.
+ 
+### 1. Backend Code Analysis & Integration
+
+Do not rely on me to list the APIs manually. Instead, read `VisitController.java`, `SampleController.java`, and their associated DTOs and Enums (like `VisitStatus` and `SampleStatus`) in the backend folder. 
+
+For every endpoint in these controllers, you must:
+
+1. Identify the exact route, HTTP method, required query parameters, and request/response DTO structures.
+
+2. Identify the `@PreAuthorize` role restrictions (e.g., Investigators schedule visits, Lab Techs update sample statuses).
+
+3. Implement the corresponding API calls in `/src/services/visitService.js` and `/src/services/sampleService.js` using our existing Axios instance.
+ 
+**Special API Handling Required:**
+
+* **Visit Status & Rescheduling:** Pay close attention to `PUT /api/visits/{id}/status`. It takes query parameters for `status`, `notes`, and crucially, a `date` parameter (for rescheduling). Ensure the UI handles this correctly (e.g., showing a date picker only if the selected status is RESCHEDULED).
+
+* **Sample Tracking:** Read the Sample endpoints carefully. Samples are linked to patients and protocols. Ensure the payload for registering a sample matches the DTO perfectly.
+
+* **Role-Scoped Fetching:** Note endpoints like `/api/visits/patient/{patientId}` or `/api/samples/protocol/{protocolId}` to ensure data is fetched efficiently based on the user's current view.
+ 
+### 2. UI & RBAC Requirements
+
+Build the UI components mapping to these features. 
+
+* Strictly enforce Role-Based Access Control in the UI using our existing `<HasRole roles={[...]}>` wrapper or `<ProtectedRoute>`. 
+
+* **Visits Dashboard (`/visits`):** A searchable/filterable table view of visits (Filter by Status, Protocol, Patient). 
+
+* **Schedule Visit Modal:** Form for `POST /api/visits` accessible to Investigators/CTMs.
+
+* **Update Visit Status Modal:** A modal containing a dropdown for the new status, a text area for clinical notes, and a conditional date picker if rescheduling.
+
+* **Samples Dashboard (`/samples`):** A searchable/filterable table view tracking biological samples.
+
+* **Register Sample Modal:** Form for `POST /api/samples` accessible to Investigators/authorized roles.
+
+* **Update Sample Status Modal:** A quick-action modal or inline table dropdown accessible strictly to `LAB_TECH` (and potentially Admins) to transition sample statuses (e.g., COLLECTED -> IN_TRANSIT -> PROCESSING -> ANALYZED).
+ 
+### 3. Design System Continuity (Army - Dark Glassmorphism)
+
+Maintain the exact design language established in previous phases:
+
+- **Background:** `#0b1326` (Midnight).
+
+- **Glass Surfaces:** `#131b2e` or `#171f33` (70-80% opacity), `backdrop-filter: blur(20px)`, and subtle 1px white borders (`rgba(255,255,255,0.05)`).
+
+- **Accents:** Cyan (`#4cd7f6`) for primary actions.
+
+- **Tables:** Horizontal dividers only.
+
+- **Status Badges:** Use vibrant, glowing pill badges for statuses. 
+
+  - *Visits:* SCHEDULED = Blue, COMPLETED = Emerald, MISSED/CANCELLED = Rose, RESCHEDULED = Amber.
+
+  - *Samples:* COLLECTED = Blue, IN_TRANSIT = Purple, PROCESSING = Amber, ANALYZED = Emerald, REJECTED = Rose.
+ 
+### 4. Deliverables & Execution
+
+1. Analyze the backend controllers (`VisitController.java`, `SampleController.java`) first to understand the exact payload requirements and role restrictions.
+
+2. Generate/Update the API service files (`visitService.js`, `sampleService.js`).
+
+3. Generate the React pages, dashboards, and modals for Visits and Samples.
+
+4. Integrate them into the main routing (`App.jsx` or your router file) and navigation sidebars dynamically based on the user's role.
+
+5. **Bonus/UX:** On the Patient Details View (created in Phase 3), add a nested tab or table to display the specific Visits and Samples linked to that patient by calling the respective `/patient/{patientId}` endpoints.
+ 
+**CRITICAL RULE:** Ensure that by the end of your modifications, EVERY API endpoint for ALL modules built so far (Auth, Users, Protocols, Sites, Patients, Investigators, Visits, Samples) works perfectly from the UI without a single issue or regression. Verify your frontend payloads exactly match the backend DTOs.
+ 
+Let's begin. Provide the code step-by-step.
+ 
+You are an expert Senior Frontend Developer. I am bringing you into an ongoing project called "LifeSci360", a Clinical Research & Laboratory Management Platform. We have a Spring Boot backend and a React + Vite frontend.
+ 
+I am uploading my complete workspace (both `backend` and `frontend` folders). Before we build new features, you must deeply understand the existing architecture, design system, and rules.
+ 
+### 1. STRICT RULES OF ENGAGEMENT
+
+* **DO NOT rewrite or refactor existing code unless explicitly asked.** You must append, integrate, and continue the existing patterns. 
+
+* **Maintain 100% API Connectivity:** Do not alter existing Axios interceptors, authentication flows, or service files in a way that breaks what is already working.
+
+* **Read Before You Code:** Always analyze the provided Spring Boot backend Controllers and DTOs to ensure your frontend payloads exactly match the backend expectations.
+ 
+### 2. ARCHITECTURE & SECURITY (RBAC)
+
+* **Tech Stack:** React, Vite, Bootstrap (customized via SCSS), Axios.
+
+* **Authentication:** Handled via JWT. The `/src/services/api.js` (or `axios.js`) file contains interceptors that attach the `Bearer` token and automatically handle 401 token refreshes.
+
+* **Role-Based Access Control (RBAC):** UI elements are conditionally rendered based on user roles (e.g., ADMIN, CTM, RESEARCH_SCIENTIST, INVESTIGATOR, LAB_TECH). We use a wrapper component (like `<HasRole roles={['ADMIN']}>` or `<ProtectedRoute>`) to hide/show buttons and secure routes. You must strictly enforce these roles based on the `@PreAuthorize` annotations in the backend controllers.
+ 
+### 3. DESIGN SYSTEM (Army - Dark Glassmorphism)
+
+You must perfectly match the existing visual language. Do not introduce default Bootstrap styles or new color palettes.
+
+* **Background:** Midnight Charcoal (`#0b1326`).
+
+* **Glass Surfaces:** `#131b2e` or `#171f33` at 70-80% opacity, `backdrop-filter: blur(20px)`, with subtle 1px white borders (`rgba(255,255,255,0.05)`).
+
+* **Typography:** `Outfit` for headings/titles, `Inter` for body/tables, `JetBrains Mono` for IDs and data strings.
+
+* **Primary Accents:** Clinical Cyan (`#4cd7f6`) for primary buttons and active states.
+
+* **Tables:** Clean, airy tables with *horizontal dividers only* (`rgba(255,255,255,0.05)`).
+
+* **Status Badges:** We use vibrant, glowing pill badges for entity statuses (e.g., ACTIVE/COMPLETED = Emerald, SUSPENDED/REJECTED = Rose, SCHEDULED = Blue, PENDING = Amber). 
+
+* **Corners:** Soft radiuses (`4px` for inputs/buttons, `8px` for cards/modals).
+ 
+### 4. CURRENT PROJECT STATE
+
+We have already successfully built the frontend for the following modules:
+
+1. Landing Page & Authentication (`/api/auth`)
+
+2. User Management (`/api/users`)
+
+3. Protocols & Documents (`/api/protocols`)
+
+4. Sites (`/api/sites`)
+
+5. Patients & Investigators (`/api/patients`, `/api/investigators`)
+
+6. Visits & Samples (`/api/visits`, `/api/samples`)
+ 
+### 5. YOUR MISSION
+
+Please acknowledge that you have read and understood these rules, the design system, and the current state of the project. Confirm that you will analyze the uploaded codebase and wait for my next instruction on which specific module (e.g., Lab Results, Compliance, Analytics) we are building next.
+ 
+Reply with: "I understand the LifeSci360 architecture, design system, and strict rules. I am ready to continue development without breaking existing features. Please provide the next module instructions."
+ 
