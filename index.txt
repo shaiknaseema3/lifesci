@@ -1,0 +1,48 @@
+You are an expert Senior Frontend Developer. I have provided you with my complete Spring Boot backend workspace for the "LifeSci360" Clinical Research Platform, along with the current React + Vite `frontend` folder we have been working on.
+
+We are now moving to Phase 5 of frontend development. Your task is to implement the **Lab Results Module** and **Notifications Module** by directly analyzing the backend code. 
+
+**Important Context:** You must continue working inside the existing `frontend` folder. This is a continuation of the Landing Page, Auth, Users, Protocols, Sites, Patients, Investigators, Visits, and Samples modules we already created. Do not overwrite or remove existing functionality; append and integrate your new code seamlessly into the existing routing, sidebars, and layouts.
+
+### 1. Backend Code Analysis & Integration
+Do not rely on me to list the APIs manually. Instead, read `LabResultController.java`, `NotificationController.java`, and their associated DTOs and Enums (e.g., `LabResultStatus`) in the backend folder. 
+For every endpoint in these controllers, you must:
+1. Identify the exact route, HTTP method, required query parameters, and request/response DTO structures.
+2. Identify the `@PreAuthorize` role restrictions (e.g., Lab Techs record results; CTMs and Scientists review/approve them).
+3. Implement the corresponding API calls in `/src/services/labResultService.js` and `/src/services/notificationService.js` using our existing Axios instance.
+
+**Special API Handling Required:**
+* **Lab Result Review Workflow:** Pay close attention to `PUT /api/lab-results/{id}/review`. This handles the approval/rejection of lab results by CTMs or Scientists. Ensure the UI sends the correct payload (approval status, reviewer comments).
+* **Role-Scoped Lab Fetching:** Note endpoints like `/api/lab-results/protocol/{protocolId}` or `/api/lab-results/sample/{sampleId}`. You will need to utilize these to nest lab results inside the Protocol and Sample detail views you created in previous phases.
+* **Notification State:** Implement the endpoints to fetch notifications and toggle their states (`PUT /api/notifications/{id}/read` and `unread`).
+
+### 2. UI & RBAC Requirements
+Build the UI components mapping to these features. 
+* Strictly enforce Role-Based Access Control in the UI using our existing `<HasRole roles={[...]}>` wrapper or `<ProtectedRoute>`. 
+* **Lab Results Dashboard (`/lab-results`):** A searchable/filterable table tracking all lab results (Filter by Status, Sample ID, Patient, Investigator).
+* **Record Lab Result Modal:** Form for `POST /api/lab-results` accessible ONLY to `LAB_TECH`. Must link to an existing Sample.
+* **Review Lab Result Modal:** Accessible strictly to `CTM` and `RESEARCH_SCIENTIST`. Allows viewing the lab result details and submitting an Approve or Reject action with mandatory comments.
+* **Global Notifications Bell (Top Navbar):** A bell icon showing an unread count badge. Clicking it opens a glassmorphic dropdown menu showing recent notifications with quick actions to mark as read.
+* **Notifications Center (`/notifications`):** A dedicated page to view all notifications, filter by read/unread, and delete notifications (if allowed by role).
+
+### 3. Design System Continuity (Army - Dark Glassmorphism)
+Maintain the exact design language established in previous phases:
+- **Background:** `#0b1326` (Midnight).
+- **Glass Surfaces:** `#131b2e` or `#171f33` (70-80% opacity), `backdrop-filter: blur(20px)`, and subtle 1px white borders (`rgba(255,255,255,0.05)`).
+- **Accents:** Cyan (`#4cd7f6`) for primary actions.
+- **Tables:** Horizontal dividers only.
+- **Status Badges:** Use vibrant, glowing pill badges for Lab Result statuses. 
+  - *Lab Results:* PENDING = Amber, APPROVED/COMPLETED = Emerald, REJECTED = Rose.
+  - *Notifications:* Unread = Cyan dot indicator; Read = Dimmed/slate text.
+
+### 4. Deliverables & Execution
+1. Analyze the backend controllers (`LabResultController.java`, `NotificationController.java`) first to understand the exact payload requirements and role restrictions.
+2. Generate/Update the API service files (`labResultService.js`, `notificationService.js`).
+3. Generate the React pages, dashboards, and modals for Lab Results.
+4. Implement the Notification Bell in the existing global top navigation/header and the dedicated Notifications page.
+5. **Bonus/UX Integration:** 
+   - On the **Sample Details View** (from Phase 4), add a nested tab or section to display the specific Lab Results linked to that sample.
+
+**CRITICAL RULE:** Ensure that by the end of your modifications, EVERY API endpoint for ALL modules built so far (Auth, Users, Protocols, Sites, Patients, Investigators, Visits, Samples, Lab Results, Notifications) works perfectly from the UI without a single issue or regression. Verify your frontend payloads exactly match the backend DTOs. 
+
+Let's begin. Provide the code step-by-step.
