@@ -1,0 +1,66 @@
+You are an expert Senior Frontend Developer. I have provided you with my complete Spring Boot backend workspace for the "LifeSci360" Clinical Research Platform, along with the current React + Vite `frontend` folder we have been working on.
+
+We are now moving to Phase 6 of frontend development. Your task is to implement the **Compliance Management Module**, **Audit Logs Module**, and **Analytics & Reporting Module** by directly analyzing the backend code.
+
+**Important Context:** You must continue working inside the existing `frontend` folder. This is a continuation of the Landing Page, Auth, Users, Protocols, Sites, Patients, Investigators, Visits, Samples, Lab Results, and Notifications modules we already created. Do not overwrite or remove existing functionality; append and integrate your new code seamlessly into the existing routing, sidebars, and layouts.
+
+---
+
+### 1. Backend Code Analysis & Integration
+Do not rely on me to list the APIs manually. Instead, read `ComplianceController.java`, `AuditLogController.java`, `AnalyticsController.java`, and their associated DTOs in the backend folder (such as `ComplianceDashboardDto`, `ComplianceMetricsDto`, `ComplianceReportDto`, `AuditLogDto`, `StudyProgressDashboardDto`, `KPISummaryDto`, `KPIReportDto`, and `TrendDataDto`).
+
+For every endpoint in these controllers, you must:
+1. Identify the exact route, HTTP method, required query parameters, and request/response DTO structures.
+2. Identify the `@PreAuthorize` role restrictions (e.g., restricted to ADMIN, REGULATORY_OFFICER, CTM, and DATA_MANAGER).
+3. Implement the corresponding API calls in `/src/services/complianceService.js`, `/src/services/auditLogService.js`, and `/src/services/analyticsService.js` using our existing Axios instance.
+
+**Special API Handling Required:**
+* **CSV File Exports:** Read `GET /api/compliance/reports/{id}/export` and `GET /api/analytics/reports/{id}/export`. Ensure the frontend service sets `responseType: 'blob'` and triggers a seamless browser download for the generated CSV files.
+* **Trend & Chart Data:** Analyze `GET /api/analytics/trends`, `GET /api/analytics/dashboard`, and `GET /api/compliance/dashboard` to prepare structured data objects for chart rendering (using Chart.js, Recharts, or ApexCharts if already in the dependencies, or lightweight SVG/CSS charts matching our glassmorphism styling).
+
+---
+
+### 2. UI & RBAC Requirements
+Build the UI components mapping to these features.
+* Strictly enforce Role-Based Access Control in the UI using our existing `<HasRole roles={[...]}>` wrapper or `<ProtectedRoute>`.
+
+* **Analytics & Operational Dashboard (`/analytics`):**
+  - High-level KPI summary cards (Total Protocols, Active Patients, Enrolled vs Target, Lab Throughput).
+  - Trend Charts View (`GET /api/analytics/trends`) showing trial progress and key metrics over time.
+  - KPI Reports list with a "Generate Report" modal (`POST /api/analytics/reports`) and a "Export CSV" action.
+  - Accessible to `ADMIN`, `CLINICAL_TRIAL_MANAGER`, `DATA_MANAGER`, and `REGULATORY_OFFICER`.
+
+* **Compliance Dashboard & Reports (`/compliance`):**
+  - Overview cards featuring compliance health metrics, open issues, and inspection readiness status (`GET /api/compliance/dashboard`).
+  - Compliance Reports table with a "Generate Compliance Report" modal (`POST /api/compliance/reports`) and CSV Export buttons.
+  - Accessible to `ADMIN`, `REGULATORY_OFFICER`, and `CLINICAL_TRIAL_MANAGER`.
+
+* **System Audit Trail (`/audit-logs`):**
+  - Comprehensive, searchable, and filterable system activity log table (`GET /api/audit-logs` and `/api/compliance/audit-logs`).
+  - Search by User, Action Type, or Entity ID with date-range filters.
+  - Accessible strictly to `ADMIN` and `REGULATORY_OFFICER`.
+
+---
+
+### 3. Design System Continuity (Army - Dark Glassmorphism)
+Maintain the exact design language established in previous phases:
+- **Background:** `#0b1326` (Midnight).
+- **Glass Surfaces:** `#131b2e` or `#171f33` (70-80% opacity), `backdrop-filter: blur(20px)`, and subtle 1px white borders (`rgba(255,255,255,0.05)`).
+- **Accents:** Cyan (`#4cd7f6`) for primary actions and active chart lines.
+- **Typography:** `Outfit` for display headings, `Inter` for body/tables, `JetBrains Mono` for Audit IDs and raw log details.
+- **Tables:** Horizontal dividers only (`rgba(255,255,255,0.05)`).
+- **Status & Risk Badges:** 
+  - Compliance / Risk: LOW = Emerald, MEDIUM = Amber, HIGH/CRITICAL = Rose.
+  - Action Logs: CREATE = Emerald, UPDATE = Blue, DELETE = Rose, LOGIN/AUTH = Cyan.
+
+---
+
+### 4. Deliverables & Execution
+1. Analyze the backend controllers (`ComplianceController.java`, `AuditLogController.java`, `AnalyticsController.java`) first to understand the exact payload requirements and role restrictions.
+2. Generate/Update the API service files (`complianceService.js`, `auditLogService.js`, `analyticsService.js`).
+3. Generate the React pages, dashboards, charts, and report generation modals.
+4. Integrate them into the main routing (`App.jsx` or your router file) and update the navigation sidebars dynamically so these pages only appear for authorized roles (`ADMIN`, `REGULATORY_OFFICER`, `CTM`, `DATA_MANAGER`).
+
+**CRITICAL RULE:** Ensure that by the end of your modifications, EVERY API endpoint across ALL modules in the entire platform (Auth, Users, Protocols, Sites, Patients, Investigators, Visits, Samples, Lab Results, Notifications, Compliance, Audit Logs, Analytics) works perfectly from the UI without a single issue or regression. Verify your frontend payloads exactly match the backend DTOs.
+
+Let's begin. Provide the code step-by-step.
